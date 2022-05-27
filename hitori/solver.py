@@ -85,7 +85,11 @@ class Solver:
 
         for _id in row_column_neighbour:
             if self.id_exists(_id):
-                self.mark_circle(_id)
+                self.mark_virtual_circle(_id)
+                if not self.virtual_error_occured():
+                    self.mark_circle(_id)
+                else:
+                    self.has_solution = False
 
     def mark_virtual_circle(self, cell_id):
         """ Помечает ячейку circle в virtual_mark_array и все ячейки с таким же значением в колонке и строке помечает
@@ -100,15 +104,17 @@ class Solver:
             id_1 = (cell_id[0], num)
             if self.virtual_mark_array[id_1] == 'blank':
                 if self.value_array[id_1] == circled_value:
-                    self.mark_virtual_dark(
-                        id_1)
+                    self.mark_virtual_dark(id_1)
+                    if not self.virtual_error_occured():
+                        self.mark_virtual_dark(id_1)
 
         for num_1 in range(self.row_count):
             id_2 = (num_1, cell_id[1])
             if self.virtual_mark_array[id_2] == 'blank':
                 if self.value_array[id_2] == circled_value:
-                    self.mark_virtual_dark(
-                        id_2)
+                    self.mark_virtual_dark(id_2)
+                    if not self.virtual_error_occured():
+                        self.mark_virtual_dark(id_2)
 
     def mark_virtual_dark(self, cell_id):
         """ Помечает ячейку dark в virtual_mark_array и всех ее соседей помечает circle в virtual_mark_array """
@@ -318,25 +324,31 @@ class Solver:
         return True
 
     def print_solution(self):
-        solution_string = '\n'
-        print("\nSolution : \n")
-        for sub_list in self.mark_array:
-            for mark in sub_list:
-                if mark == 'dark':
-                    print(u' X ', end='')
-                    solution_string += u' • '
-                elif mark == 'circle':
-                    print(' O ', end='')
-                    solution_string += ' o '
-                else:
-                    print(' ? ', end='')
-                    solution_string += ' ? '
-            print('')
-            solution_string += '\n'
+        if self.has_solution:
+            solution_string = '\n'
+            print("\nSolution : \n")
+            for sub_list in self.mark_array:
+                for mark in sub_list:
+                    if mark == 'dark':
+                        print(u' X ', end='')
+                        solution_string += u' • '
+                    elif mark == 'circle':
+                        print(' O ', end='')
+                        solution_string += ' o '
+                    else:
+                        print(' ? ', end='')
+                        solution_string += ' ? '
+                print('')
+                solution_string += '\n'
+        else:
+            print('No solution')
         print("\nTime taken to solve : ", self.time_diff)
 
     def get_solution(self):
-        return self.mark_array
+        if self.has_solution:
+            return self.mark_array
+        else:
+            return None
 
     def run(self):
         self.value_array = np.array(self.data)

@@ -86,7 +86,7 @@ class Hitori(Game):
             data.append(data_row)
         return data
 
-    def show_message(self, text, color=(255, 255, 255), font_name='Arial', font_size=20, centralized=False):
+    def show_message(self, text, color=(255, 0, 255), font_name='Arial', font_size=20, centralized=False):
         """ Функция для отображения текста на экране """
         message = TextObject(c.screen_width // 2, c.screen_height // 2, lambda: text, color, font_name, font_size)
         self.draw()
